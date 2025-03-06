@@ -12,13 +12,26 @@ data Environment = Environment
 type EnvironmentM = Reader Environment
 
 formatUserName :: EnvironmentM String
-formatUserName = undefined
+formatUserName = do
+  isSuper <- asks isSuperUser
+  name <- asks username 
+  if isSuper
+    then return "root"
+    else return name
   
 formatHost :: EnvironmentM String
-formatHost = undefined
+formatHost = do 
+  user_host <- asks host 
+  return user_host
 
 formatCurrentDir :: EnvironmentM String
-formatCurrentDir = undefined
+formatCurrentDir = do
+  user_CurrentDir <- asks currentDir
+  return user_CurrentDir
 
 formatPrompt :: EnvironmentM String
-formatPrompt = undefined
+formatPrompt = do 
+  name <- formatUserName
+  hostname <- formatHost
+  currDir <- formatCurrentDir 
+  return $ name ++ "@" ++ hostname ++ ":" ++ currDir ++ "$"
